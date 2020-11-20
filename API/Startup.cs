@@ -1,21 +1,13 @@
-using API.Controllers;
 using Core.Interfaces;
 using Infrastructure;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace API
 {
@@ -38,6 +30,11 @@ namespace API
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 
+            services.AddControllers()
+                .AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling =
+                Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -48,9 +45,15 @@ namespace API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            var exceptionRoute = env.IsDevelopment() 
+                ? "/error-local-development" 
+                : "/error";
+            
+            app.UseExceptionHandler(exceptionRoute);
+
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                //app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
             }
@@ -67,7 +70,7 @@ namespace API
             });
         }
 
-        private void RegisterContainer(IServiceCollection services)
+        private static void RegisterContainer(IServiceCollection services)
         {
             services.AddScoped<IDatabaseContext, DatabaseContext>();
             services.AddScoped<IRepository, Repository>();

@@ -92,6 +92,7 @@ namespace Infrastructure
             };
 
             context.Brands.AddRange(brands);
+            context.SaveChanges();
 
             var flavors = new Flavor[]
             {
@@ -145,8 +146,30 @@ namespace Infrastructure
                }
            };
             context.Flavors.AddRange(flavors);
-
             context.SaveChanges();
+
+            var record = new Record
+            {
+                CoffeeId = 1,
+                DoseIn = 17.5m,
+                DoseOut = 32.5m,
+                Time = 30,
+                Rating = 3.5m,
+            };
+
+            context.Add(record);
+            context.SaveChanges();
+
+            var recordFlavors = new RecordFlavors[]
+            {
+                new RecordFlavors{FlavorId = 1, RecordId = 1},
+                new RecordFlavors{FlavorId = 2, RecordId = 1},
+                new RecordFlavors{FlavorId = 3, RecordId = 1},
+            };
+
+            context.AddRange(recordFlavors);
+            context.SaveChanges();
+
         }
     }
 }

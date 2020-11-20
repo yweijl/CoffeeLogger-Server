@@ -45,17 +45,20 @@ namespace API.Controllers
         public async Task<IActionResult> Post([FromBody] NewRecordDto newRecord)
         {
             var existingFlavors = _repository.List<Flavor>(
-                x => newRecord.Flavors.Contains(x.Name, StringComparer.InvariantCultureIgnoreCase));
+            x => newRecord.Flavors.Contains(x.Name, StringComparer.InvariantCultureIgnoreCase));
 
             var newFlavors = newRecord.Flavors
-                .Where(x => !existingFlavors.Any(y => y.Name == x))
+                .Where(x => !existingFlavors.Any(y => x.Contains(y.Name, StringComparison.InvariantCultureIgnoreCase)))
                 .Select(x => new Flavor { Name = x }).ToList();
 
-            var addedFlavors =
+            if (newFlavors.Count != 0)
+            {
+                var addedFlavors =
                 await _repository.InsertRangeAsync(newFlavors)
                 .ConfigureAwait(false);
 
-            existingFlavors.AddRange(addedFlavors);
+                existingFlavors.AddRange(addedFlavors);
+            }
 
             var record = await _repository.InsertAsync(
                 new Record
@@ -76,6 +79,7 @@ namespace API.Controllers
                     }).ToList();
 
             await _repository.InsertRangeAsync(recordFlavors).ConfigureAwait(false);
+
 
             return CreatedAtAction(nameof(Get), new { id = record.Id }, record);
         }

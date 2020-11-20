@@ -20,6 +20,13 @@ namespace API
             host.Run();
         }
 
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
+
         private static void CreateDbIfNotExists(IHost host)
         {
             using var scope = host.Services.CreateScope();
@@ -27,6 +34,7 @@ namespace API
             try
             {
                 var context = services.GetRequiredService<DatabaseContext>();
+                context.Database.EnsureDeleted();
                 DefaultSeed.Initialize(context);
             }
             catch (Exception ex)
@@ -35,12 +43,5 @@ namespace API
                 logger.LogError(ex, "An error occurred creating the DB.");
             }
         }
-
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
     }
 }

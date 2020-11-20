@@ -6,5 +6,6 @@ namespace Core.Entities
     {
         public string Name { get; set; }
         public virtual ICollection<Record> Records { get; set; }
+        public virtual ICollection<RecordFlavors> RecordFlavors { get; set; }
     }
 }

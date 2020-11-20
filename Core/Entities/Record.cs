@@ -9,6 +9,7 @@ namespace Core.Entities
         public decimal Time { get; set; }
         public decimal Rating { get; set; }
         public virtual ICollection<Flavor> Flavors { get; set; }
+        public virtual ICollection<RecordFlavors> RecordFlavors { get; set; }
         public long CoffeeId { get; set; }
     }
 }

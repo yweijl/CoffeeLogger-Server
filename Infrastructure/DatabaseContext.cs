@@ -26,6 +26,10 @@ namespace Infrastructure
                     x => x.ToString(),
                     x => (CoffeeType)Enum.Parse(typeof(CoffeeType), x));
 
+            modelBuilder.Entity<Flavor>()
+                .HasIndex(x => x.Name)
+                .IsUnique();
+
             modelBuilder
                 .Entity<Record>()
                 .HasMany(r => r.Flavors)
@@ -33,7 +37,12 @@ namespace Infrastructure
                 .UsingEntity<RecordFlavors>(
                 rf => rf.HasOne(x => x.Flavor).WithMany().HasForeignKey(x => x.FlavorId),
                 rf => rf.HasOne(x => x.Record).WithMany().HasForeignKey(x => x.RecordId))
-                .HasKey(rf => new { rf.RecordId, rf.FlavorId });
+                .HasKey(rf => rf.Id);
+
+            modelBuilder
+                .Entity<RecordFlavors>()
+                .HasIndex(rf => new { rf.RecordId, rf.FlavorId })
+                .IsUnique();
         }
     }
 }
