@@ -1,11 +1,9 @@
-﻿using Core.DTOs;
-using Core.Entities;
-using Core.Interfaces;
+﻿using Core.Commands.Objects;
+using Core.DTOs;
+using Core.Queries.Objects;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace API.Controllers
@@ -15,25 +13,28 @@ namespace API.Controllers
     public class BrandController : ControllerBase
     {
         private readonly ILogger<BrandController> _logger;
-        private readonly IRepository _repository;
+        private readonly IMediator mediatr;
 
-        public BrandController(ILogger<BrandController> logger, IRepository repository)
+        public BrandController(ILogger<BrandController> logger, IMediator mediatr)
         {
             _logger = logger;
-            _repository = repository;
+            this.mediatr = mediatr;
         }
 
         [HttpGet("list")]
-        public IActionResult GetList()
+        public async Task<IActionResult> GetList()
         {
-            var brands = _repository.List<Brand>();
-            return Ok(brands);
+            var brands = await mediatr.Send(new GetBrandsQuery()).ConfigureAwait(false);
+            
+            return brands is not null
+                ? Ok(brands)
+                : NotFound();
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get(long id)
+        public async Task<IActionResult> Get(long id)
         {
-            var brand = _repository.Single<Brand>(x => x.Id == id);
+            var brand = await mediatr.Send(new GetBrandQuery(id)).ConfigureAwait(false);
 
             return brand is not null 
                 ? Ok(brand)
@@ -41,13 +42,11 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] NewBrandDto newBrand)
+        public async Task <IActionResult> Post([FromBody] NewBrandDto newBrand)
         {
-            var brand = _repository.InsertAsync(new Brand
-            {
-                Name = newBrand.Name,
-                ImageUri = newBrand.imageUri
-            });
+            var brand = await mediatr.Send(
+                new NewBrandCommand(newBrand.Name, newBrand.imageUri)
+                ).ConfigureAwait(false);
 
             return CreatedAtAction(nameof(Get), new { id = brand.Id }, brand);
         }

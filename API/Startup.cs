@@ -1,6 +1,12 @@
+using Core.Commands.Handlers;
+using Core.Commands.Objects;
+using Core.DTOs;
 using Core.Interfaces;
+using Core.Queries.Handlers;
+using Core.Queries.Objects;
 using Infrastructure;
 using Infrastructure.Repositories;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using System.Collections.Generic;
 
 namespace API
 {
@@ -27,6 +34,8 @@ namespace API
 
             services.AddDbContext<DatabaseContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddMediatR(typeof(Startup));
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -74,6 +83,21 @@ namespace API
         {
             services.AddScoped<IDatabaseContext, DatabaseContext>();
             services.AddScoped<IRepository, Repository>();
+
+            //Handlers
+            
+            // Queries
+            services.AddScoped<IRequestHandler<GetBrandQuery, BrandDto>, GetBrandQueryHandler>();
+            services.AddScoped<IRequestHandler<GetBrandsQuery, List<BrandDto>>, GetBrandsQueryHandler>();
+            services.AddScoped<IRequestHandler<GetRecordQuery, RecordDto>, GetRecordQueryHandler>();
+            services.AddScoped<IRequestHandler<GetRecordsQuery, List<RecordDto>>, GetRecordsQueryHandler>();
+            services.AddScoped<IRequestHandler<GetCoffeeQuery, CoffeeDto>, GetCoffeeQueryHandler>();
+            services.AddScoped<IRequestHandler<GetCoffeesQuery, List<CoffeeDto>>, GetCoffeesQueryHandler>();
+
+            // Commands
+            services.AddScoped<IRequestHandler<NewBrandCommand, BrandDto>, NewBrandCommandHandler>();
+            services.AddScoped<IRequestHandler<NewCoffeeCommand, CoffeeDto>, NewCoffeeCommandHandler>();
+            services.AddScoped<IRequestHandler<NewRecordCommand, RecordDto>, NewRecordCommandHandler>();
         }
     }
 }

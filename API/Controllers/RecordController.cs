@@ -1,12 +1,9 @@
-﻿using Core.DTOs;
-using Core.Entities;
-using Core.Enums;
-using Core.Interfaces;
+﻿using Core.Commands.Objects;
+using Core.DTOs;
+using Core.Queries.Objects;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace API.Controllers
@@ -16,25 +13,28 @@ namespace API.Controllers
     public class RecordController : ControllerBase
     {
         private readonly ILogger<BrandController> _logger;
-        private readonly IRepository _repository;
+        private readonly IMediator _mediatr;
 
-        public RecordController(ILogger<BrandController> logger, IRepository repository)
+        public RecordController(ILogger<BrandController> logger, IMediator mediatr)
         {
             _logger = logger;
-            _repository = repository;
+            _mediatr = mediatr;
         }
 
         [HttpGet("list")]
-        public IActionResult GetList()
+        public async Task<IActionResult> GetList()
         {
-            var record = _repository.List<Brand>();
-            return Ok(record);
+            var records = await _mediatr.Send(new GetRecordsQuery()).ConfigureAwait(false);
+            
+            return records is not null
+                ? Ok(records)
+                : NotFound();
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get(long id)
+        public async Task <IActionResult> Get(long id)
         {
-            var record = _repository.Single<Coffee>(x => x.Id == id);
+            var record = await _mediatr.Send(new GetRecordQuery(id)).ConfigureAwait(false);
 
             return record is not null
                 ? Ok(record)
@@ -44,42 +44,14 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] NewRecordDto newRecord)
         {
-            var existingFlavors = _repository.List<Flavor>(
-            x => newRecord.Flavors.Contains(x.Name, StringComparer.InvariantCultureIgnoreCase));
-
-            var newFlavors = newRecord.Flavors
-                .Where(x => !existingFlavors.Any(y => x.Contains(y.Name, StringComparison.InvariantCultureIgnoreCase)))
-                .Select(x => new Flavor { Name = x }).ToList();
-
-            if (newFlavors.Count != 0)
-            {
-                var addedFlavors =
-                await _repository.InsertRangeAsync(newFlavors)
-                .ConfigureAwait(false);
-
-                existingFlavors.AddRange(addedFlavors);
-            }
-
-            var record = await _repository.InsertAsync(
-                new Record
-                {
-                    DoseIn = newRecord.DoseIn,
-                    DoseOut = newRecord.DoseOut,
-                    Time = newRecord.Time,
-                    CoffeeId = newRecord.CoffeeId,
-                    Rating = newRecord.Rating,
-                }).ConfigureAwait(false);
-
-            var recordFlavors =
-                existingFlavors.Select(
-                    x => new RecordFlavors
-                    {
-                        FlavorId = x.Id,
-                        RecordId = record.Id
-                    }).ToList();
-
-            await _repository.InsertRangeAsync(recordFlavors).ConfigureAwait(false);
-
+            var record = await _mediatr.Send(new NewRecordCommand(
+                newRecord.CoffeeId, 
+                newRecord.DoseIn, 
+                newRecord.DoseOut, 
+                newRecord.Time, 
+                newRecord.Flavors, 
+                newRecord.Rating
+                )).ConfigureAwait(false);
 
             return CreatedAtAction(nameof(Get), new { id = record.Id }, record);
         }

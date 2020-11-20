@@ -18,38 +18,51 @@ namespace Infrastructure.Repositories
             _context = context;
         }
 
-        public TResult Single<TEntity, TResult>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TResult>> selector)
+        public Task<TResult> SingleAsync<TEntity, TResult>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TResult>> selector)
             where TEntity : EntityBase, new()
         {
             if (predicate == null) throw new ArgumentNullException(nameof(predicate));
             if (predicate == null) throw new ArgumentNullException(nameof(selector));
 
-            var set = _context.Set<TEntity>();
-            return set.AsNoTracking().Where(predicate).Select(selector).SingleOrDefault();
+            return _context.Set<TEntity>()
+                .AsNoTracking()
+                .Where(predicate)
+                .Select(selector)
+                .SingleOrDefaultAsync();
         }
 
-        public TEntity Single<TEntity>(Expression<Func<TEntity, bool>> predicate)
+        public Task<TEntity> SingleAsync<TEntity>(Expression<Func<TEntity, bool>> predicate)
             where TEntity : EntityBase, new()
         {
             if (predicate == null) throw new ArgumentNullException(nameof(predicate));
 
-            var set = _context.Set<TEntity>();
-            return set.AsNoTracking().Where(predicate).SingleOrDefault();
+            return _context.Set<TEntity>()
+                .AsNoTracking()
+                .SingleOrDefaultAsync(predicate);
         }
 
-        public List<TEntity> List<TEntity>() where TEntity : EntityBase, new()
+        public Task<List<TEntity>> ListAsync<TEntity>() where TEntity : EntityBase, new()
         {
             return _context.Set<TEntity>()
                 .AsNoTracking()
-                .ToList();
+                .ToListAsync();
         }
 
-        public List<TEntity> List<TEntity>(Func<TEntity, bool> predicate) where TEntity : EntityBase, new()
+        public Task<List<TEntity>> ListAsync<TEntity>(Expression<Func<TEntity, bool>> predicate) where TEntity : EntityBase, new()
         {
             if (predicate == null) throw new ArgumentNullException(nameof(predicate));
 
-            var set = _context.Set<TEntity>().AsNoTracking();
-            return set.Where(predicate).ToList();
+            return _context.Set<TEntity>()
+                .AsNoTracking()
+                .Where(predicate)
+                .ToListAsync();
+        }
+
+        public Task<List<TResult>> ListAsync<TEntity, TResult>(Expression<Func<TEntity, TResult>> selector) where TEntity : EntityBase, new()
+        {
+            return _context.Set<TEntity>()
+               .AsNoTracking().Select(selector)
+               .ToListAsync();
         }
 
         public Task<TEntity> InsertAsync<TEntity>(TEntity entity) where TEntity : EntityBase, new()

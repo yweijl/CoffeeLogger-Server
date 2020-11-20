@@ -1,12 +1,9 @@
-﻿using Core.DTOs;
-using Core.Entities;
-using Core.Enums;
-using Core.Interfaces;
+﻿using Core.Commands.Objects;
+using Core.DTOs;
+using Core.Queries.Objects;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace API.Controllers
@@ -16,25 +13,28 @@ namespace API.Controllers
     public class CoffeeController : ControllerBase
     {
         private readonly ILogger<BrandController> _logger;
-        private readonly IRepository _repository;
+        private readonly IMediator _mediatr;
 
-        public CoffeeController(ILogger<BrandController> logger, IRepository repository)
+        public CoffeeController(ILogger<BrandController> logger, IMediator mediatr)
         {
             _logger = logger;
-            _repository = repository;
+            _mediatr = mediatr;
         }
 
         [HttpGet("list")]
-        public IActionResult GetList()
+        public async Task<IActionResult> GetList()
         {
-            var coffee = _repository.List<Brand>();
-            return Ok(coffee);
+            var coffees = await _mediatr.Send(new GetCoffeesQuery()).ConfigureAwait(false);
+
+            return coffees is not null
+                ? Ok(coffees)
+                : NotFound();
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get(long id)
+        public async Task<IActionResult> Get(long id)
         {
-            var coffee = _repository.Single<Coffee>(x => x.Id == id);
+            var coffee = await _mediatr.Send(new GetCoffeeQuery(id)).ConfigureAwait(false);
 
             return coffee is not null 
                 ? Ok(coffee)
@@ -44,13 +44,11 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] NewCoffeeDto newCoffee)
         {
-            var coffee = await _repository.InsertAsync(new Coffee
-            {
-                BrandId = newCoffee.BrandId,
-                Country = newCoffee.Country,
-                CoffeeType = Enum.Parse<CoffeeType>(newCoffee.CoffeeType, true)
-            }).ConfigureAwait(false);
+            var coffee = await _mediatr.Send(
 
+                new NewCoffeeCommand(newCoffee.BrandId, newCoffee.CoffeeType, newCoffee.Country))
+                .ConfigureAwait(false);
+          
             return CreatedAtAction(nameof(Get), new { id = coffee.Id }, coffee);
         }
     }
