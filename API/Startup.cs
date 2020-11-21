@@ -1,20 +1,12 @@
-using Core.Commands.Handlers;
-using Core.Commands.Objects;
-using Core.DTOs;
-using Core.Interfaces;
-using Core.Queries.Handlers;
-using Core.Queries.Objects;
+using Application;
 using Infrastructure;
-using Infrastructure.Repositories;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using System.Collections.Generic;
 
 namespace API
 {
@@ -28,16 +20,18 @@ namespace API
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services, IWebHostEnvironment env)
         {
             RegisterContainer(services);
-
-            services.AddDbContext<DatabaseContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-
             services.AddMediatR(typeof(Startup));
+            services.AddApplication();
+            services.AddInfrastructure(Configuration);
 
-            services.AddDatabaseDeveloperPageExceptionFilter();
+            if (env.IsDevelopment())
+            {
+                services.AddDatabaseDeveloperPageExceptionFilter();
+            }
+
 
             services.AddControllers()
                 .AddNewtonsoftJson(options =>
@@ -54,10 +48,10 @@ namespace API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            var exceptionRoute = env.IsDevelopment() 
-                ? "/error-local-development" 
+            var exceptionRoute = env.IsDevelopment()
+                ? "/error-local-development"
                 : "/error";
-            
+
             app.UseExceptionHandler(exceptionRoute);
 
             if (env.IsDevelopment())
@@ -81,23 +75,10 @@ namespace API
 
         private static void RegisterContainer(IServiceCollection services)
         {
-            services.AddScoped<IDatabaseContext, DatabaseContext>();
-            services.AddScoped<IRepository, Repository>();
 
             //Handlers
-            
-            // Queries
-            services.AddScoped<IRequestHandler<GetBrandQuery, BrandDto>, GetBrandQueryHandler>();
-            services.AddScoped<IRequestHandler<GetBrandsQuery, List<BrandDto>>, GetBrandsQueryHandler>();
-            services.AddScoped<IRequestHandler<GetRecordQuery, RecordDto>, GetRecordQueryHandler>();
-            services.AddScoped<IRequestHandler<GetRecordsQuery, List<RecordDto>>, GetRecordsQueryHandler>();
-            services.AddScoped<IRequestHandler<GetCoffeeQuery, CoffeeDto>, GetCoffeeQueryHandler>();
-            services.AddScoped<IRequestHandler<GetCoffeesQuery, List<CoffeeDto>>, GetCoffeesQueryHandler>();
 
-            // Commands
-            services.AddScoped<IRequestHandler<NewBrandCommand, BrandDto>, NewBrandCommandHandler>();
-            services.AddScoped<IRequestHandler<NewCoffeeCommand, CoffeeDto>, NewCoffeeCommandHandler>();
-            services.AddScoped<IRequestHandler<NewRecordCommand, RecordDto>, NewRecordCommandHandler>();
+
         }
     }
 }

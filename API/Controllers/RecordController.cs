@@ -1,6 +1,6 @@
-﻿using Core.Commands.Objects;
-using Core.DTOs;
-using Core.Queries.Objects;
+﻿using Application.Commands.Objects;
+using Application.DTOs;
+using Application.Queries.Objects;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

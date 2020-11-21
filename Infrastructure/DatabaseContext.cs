@@ -1,8 +1,8 @@
 ﻿using Core.Enums;
 using Core.Entities;
-using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System;
+using Infrastructure.Interfaces;
 
 namespace Infrastructure
 {
