@@ -1,15 +1,18 @@
-﻿using Application.Commands.Objects;
-using Application.DTOs;
-using Application.Queries.Objects;
+﻿using Application.Commands.Handlers;
+using Application.DTOs.Record;
+using Application.Queries.Handlers;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Produces("application/json")]
     public class RecordController : ControllerBase
     {
         private readonly ILogger<BrandController> _logger;
@@ -22,6 +25,8 @@ namespace API.Controllers
         }
 
         [HttpGet("list")]
+        [ProducesResponseType(typeof(List<RecordDto>),StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetList()
         {
             var records = await _mediatr.Send(new GetRecordsQuery()).ConfigureAwait(false);
@@ -32,6 +37,8 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(typeof(RecordDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task <IActionResult> Get(long id)
         {
             var record = await _mediatr.Send(new GetRecordQuery(id)).ConfigureAwait(false);
@@ -42,6 +49,8 @@ namespace API.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(typeof(RecordDto), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Post([FromBody] NewRecordDto newRecord)
         {
             var record = await _mediatr.Send(new NewRecordCommand(

@@ -1,7 +1,6 @@
-﻿using Application.DTOs;
+﻿using Application.DTOs.Brand;
 using Core.Entities;
 using Infrastructure.Interfaces;
-using Application.Queries.Objects;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,6 +25,16 @@ namespace Application.Queries.Handlers
                     ImageUri = x.ImageUri
                 }).ConfigureAwait(false);
             return brands;
+        }
+    }
+
+    public class GetBrandQuery : IRequest<BrandDto>
+    {
+        public long Id { get; }
+
+        public GetBrandQuery(long id)
+        {
+            Id = id;
         }
     }
 }

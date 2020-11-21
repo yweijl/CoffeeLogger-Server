@@ -12,10 +12,12 @@ namespace Infrastructure.Repositories
     public class Repository : IRepository
     {
         private readonly IDatabaseContext _context;
+        private readonly DatabaseContext dc;
 
-        public Repository(IDatabaseContext context)
+        public Repository(IDatabaseContext context, DatabaseContext dc)
         {
             _context = context;
+            this.dc = dc;
         }
 
         public Task<TResult> SingleAsync<TEntity, TResult>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TResult>> selector)
@@ -62,6 +64,15 @@ namespace Infrastructure.Repositories
         {
             return _context.Set<TEntity>()
                .AsNoTracking().Select(selector)
+               .ToListAsync();
+        }
+
+        public Task<List<TResult>> ListAsync<TEntity, TResult>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TResult>> selector) where TEntity : EntityBase, new()
+        {
+            return _context.Set<TEntity>()
+               .AsNoTracking()
+               .Where(predicate)
+               .Select(selector)
                .ToListAsync();
         }
 

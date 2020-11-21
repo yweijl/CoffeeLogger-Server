@@ -1,15 +1,18 @@
-﻿using Application.Commands.Objects;
-using Application.DTOs;
-using Application.Queries.Objects;
+﻿using Application.Commands.Handlers;
+using Application.DTOs.Coffee;
+using Application.Queries.Handlers;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Produces("application/json")]
     public class CoffeeController : ControllerBase
     {
         private readonly ILogger<BrandController> _logger;
@@ -22,6 +25,8 @@ namespace API.Controllers
         }
 
         [HttpGet("list")]
+        [ProducesResponseType(typeof(List<CoffeeDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetList()
         {
             var coffees = await _mediatr.Send(new GetCoffeesQuery()).ConfigureAwait(false);
@@ -31,7 +36,21 @@ namespace API.Controllers
                 : NotFound();
         }
 
+        [HttpGet("detailedList")]
+        [ProducesResponseType(typeof(List<DetailedCoffeeDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetDetailedList()
+        {
+            var detailedCoffees = await _mediatr.Send(new GetDetailedCoffeesQuery()).ConfigureAwait(false);
+
+            return detailedCoffees is not null
+                ? Ok(detailedCoffees)
+                : NotFound();
+        }
+
         [HttpGet("{id}")]
+        [ProducesResponseType(typeof(CoffeeDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Get(long id)
         {
             var coffee = await _mediatr.Send(new GetCoffeeQuery(id)).ConfigureAwait(false);
@@ -42,6 +61,8 @@ namespace API.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(typeof(CoffeeDto), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Post([FromBody] NewCoffeeDto newCoffee)
         {
             var coffee = await _mediatr.Send(

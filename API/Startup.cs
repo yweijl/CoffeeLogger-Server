@@ -12,6 +12,8 @@ namespace API
 {
     public class Startup
     {
+        private readonly string _allowedOrigins = "_clientApp";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -20,17 +22,24 @@ namespace API
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services, IWebHostEnvironment env)
+        public void ConfigureServices(IServiceCollection services)
         {
-            RegisterContainer(services);
             services.AddMediatR(typeof(Startup));
             services.AddApplication();
             services.AddInfrastructure(Configuration);
 
-            if (env.IsDevelopment())
+            services.AddDatabaseDeveloperPageExceptionFilter();
+
+            services.AddCors(options =>
             {
-                services.AddDatabaseDeveloperPageExceptionFilter();
-            }
+                options.AddPolicy(name: _allowedOrigins,
+                                  builder =>
+                                  {
+                                      builder.WithOrigins("http://localhost:4200");
+                                      builder.AllowAnyHeader();
+                                      builder.AllowAnyMethod();
+                                  });
+            });
 
 
             services.AddControllers()
@@ -39,6 +48,7 @@ namespace API
                 Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
             services.AddControllers();
+            services.AddSwaggerDocument();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
@@ -57,13 +67,14 @@ namespace API
             if (env.IsDevelopment())
             {
                 //app.UseDeveloperExceptionPage();
-                app.UseSwagger();
+                app.UseOpenApi();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
             }
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
+            app.UseCors(_allowedOrigins);
 
             app.UseAuthorization();
 
@@ -71,14 +82,6 @@ namespace API
             {
                 endpoints.MapControllers();
             });
-        }
-
-        private static void RegisterContainer(IServiceCollection services)
-        {
-
-            //Handlers
-
-
         }
     }
 }

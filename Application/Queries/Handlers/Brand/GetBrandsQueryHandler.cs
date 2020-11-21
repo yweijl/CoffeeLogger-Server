@@ -1,7 +1,6 @@
-﻿using Application.DTOs;
+﻿using Application.DTOs.Brand;
 using Core.Entities;
 using Infrastructure.Interfaces;
-using Application.Queries.Objects;
 using MediatR;
 using System.Collections.Generic;
 using System.Threading;
@@ -29,4 +28,7 @@ namespace Application.Queries.Handlers
             return brands;
         }
     }
+
+    public class GetBrandsQuery : IRequest<List<BrandDto>>
+    { }
 }

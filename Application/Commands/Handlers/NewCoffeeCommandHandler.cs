@@ -1,12 +1,11 @@
-﻿using Application.Commands.Objects;
-using Application.DTOs;
+﻿using Application.DTOs.Coffee;
 using Core.Entities;
 using Core.Enums;
+using Infrastructure.Interfaces;
 using MediatR;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Infrastructure.Interfaces;
 
 namespace Application.Commands.Handlers
 {
@@ -35,5 +34,19 @@ namespace Application.Commands.Handlers
                 Country = coffee.Country
             };
         }
+    }
+
+    public class NewCoffeeCommand : IRequest<CoffeeDto>
+    {
+        public NewCoffeeCommand(long brandId, string coffeeType, string country)
+        {
+            BrandId = brandId;
+            CoffeeType = coffeeType;
+            Country = country;
+        }
+
+        public long BrandId { get; }
+        public string CoffeeType { get; }
+        public string Country { get; }
     }
 }

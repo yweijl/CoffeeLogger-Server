@@ -1,5 +1,4 @@
-﻿using Application.DTOs;
-using Application.Queries.Objects;
+﻿using Application.DTOs.Record;
 using Core.Entities;
 using Infrastructure.Interfaces;
 using MediatR;
@@ -33,4 +32,7 @@ namespace Application.Queries.Handlers
             return Records;
         }
     }
+
+    public class GetRecordsQuery : IRequest<List<RecordDto>>
+    { }
 }

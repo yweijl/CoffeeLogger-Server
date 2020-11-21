@@ -22,6 +22,7 @@ namespace Infrastructure
                     CreateDate = now,
                     MutationDate = now,
                     Name = "IEF & IDO",
+                    ImageUri = "../assets/Logos/IefIdo_CMYK_V2-Hersteld_Rondo-Mexico.png",
                     Coffees = new List<Coffee>
                     {
                         new Coffee {
@@ -29,22 +30,25 @@ namespace Infrastructure
                             CreateDate = now,
                             MutationDate = now,
                             CoffeeType = CoffeeType.Arabica,
-                            Country = "Mexico"
+                            Country = "Mexico",
+                            Rating = 4
                         },
                         new Coffee {
 
                             CreateDate = now,
                             MutationDate = now,
                             CoffeeType = CoffeeType.Arabica,
-                            Country = "Guatemala"
+                            Country = "Guatemala",
+                            Rating = 3.1m,
+                            loggedRecords = 312
                         },
-
                     }
                 },
                 new Brand
                 {
                     CreateDate = now,
                     MutationDate = now,
+                    ImageUri = "../assets/Logos/IefIdo_CMYK_V2-Hersteld_Rondo-Mexico.png",
                     Name = "Boon",
                     Coffees = new List<Coffee>
                     {
@@ -62,6 +66,7 @@ namespace Infrastructure
                     CreateDate = now,
                     MutationDate = now,
                     Name = "Giraffe",
+                    ImageUri = "../assets/Logos/IefIdo_CMYK_V2-Hersteld_Rondo-Mexico.png",
                     Coffees = new List<Coffee>
                     {
                         new Coffee {
@@ -77,6 +82,7 @@ namespace Infrastructure
                 {
                     CreateDate = now,
                     MutationDate = now,
+                    ImageUri = "../assets/Logos/IefIdo_CMYK_V2-Hersteld_Rondo-Mexico.png",
                     Name = "Douwe Egberts",
                     Coffees = new List<Coffee>
                     {

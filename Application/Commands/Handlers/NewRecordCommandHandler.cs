@@ -1,12 +1,11 @@
-﻿using Application.Commands.Objects;
-using Application.DTOs;
+﻿using Application.DTOs.Record;
+using Core.Entities;
+using Infrastructure.Interfaces;
 using MediatR;
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Linq;
-using Infrastructure.Interfaces;
-using Core.Entities;
 
 namespace Application.Commands.Handlers
 {
@@ -21,7 +20,7 @@ namespace Application.Commands.Handlers
 
         public async Task<RecordDto> Handle(NewRecordCommand request, CancellationToken cancellationToken)
         {
-            var existingFlavors = 
+            var existingFlavors =
                 await _repository.ListAsync<Flavor>(
                     x => request.Flavors
                     .Contains(x.Name))
@@ -73,5 +72,24 @@ namespace Application.Commands.Handlers
                 Rating = record.Rating
             };
         }
+    }
+    public class NewRecordCommand : IRequest<RecordDto>
+    {
+        public NewRecordCommand(long coffeeId, decimal doseIn, decimal doseOut, decimal time, string[] flavors, decimal rating)
+        {
+            CoffeeId = coffeeId;
+            DoseIn = doseIn;
+            DoseOut = doseOut;
+            Time = time;
+            Flavors = flavors;
+            Rating = rating;
+        }
+
+        public long CoffeeId { get; }
+        public decimal DoseIn { get; }
+        public decimal DoseOut { get; }
+        public decimal Time { get; }
+        public string[] Flavors { get; }
+        public decimal Rating { get; }
     }
 }

@@ -9,5 +9,7 @@ namespace Core.Entities
         public CoffeeType CoffeeType { get; set; }
         public long BrandId { get; set; }
         public virtual ICollection<Record> Records { get; set; }
+        public decimal Rating { get; set; }
+        public int loggedRecords { get; set; }
     }
 }

@@ -1,8 +1,8 @@
 ﻿using Application.Commands.Handlers;
-using Application.Commands.Objects;
-using Application.DTOs;
+using Application.DTOs.Brand;
+using Application.DTOs.Coffee;
+using Application.DTOs.Record;
 using Application.Queries.Handlers;
-using Application.Queries.Objects;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
@@ -21,6 +21,7 @@ namespace Application
             services.AddScoped<IRequestHandler<GetRecordsQuery, List<RecordDto>>, GetRecordsQueryHandler>();
             services.AddScoped<IRequestHandler<GetCoffeeQuery, CoffeeDto>, GetCoffeeQueryHandler>();
             services.AddScoped<IRequestHandler<GetCoffeesQuery, List<CoffeeDto>>, GetCoffeesQueryHandler>();
+            services.AddScoped<IRequestHandler<GetDetailedCoffeesQuery, List<DetailedCoffeeDto>>, GetDetailedCoffeesQueryHandler>();
 
             // Commands
             services.AddScoped<IRequestHandler<NewBrandCommand, BrandDto>, NewBrandCommandHandler>();

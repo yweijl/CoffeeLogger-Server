@@ -1,5 +1,4 @@
-﻿using Application.DTOs;
-using Application.Queries.Objects;
+﻿using Application.DTOs.Record;
 using Core.Entities;
 using Infrastructure.Interfaces;
 using MediatR;
@@ -30,6 +29,16 @@ namespace Application.Queries.Handlers
                 }).ConfigureAwait(false);
 
             return brands;
+        }
+    }
+
+    public class GetRecordQuery : IRequest<RecordDto>
+    {
+        public long Id { get; }
+
+        public GetRecordQuery(long id)
+        {
+            Id = id;
         }
     }
 }

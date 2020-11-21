@@ -1,5 +1,4 @@
-﻿using Application.DTOs;
-using Application.Queries.Objects;
+﻿using Application.DTOs.Coffee;
 using Core.Entities;
 using Infrastructure.Interfaces;
 using MediatR;
@@ -31,4 +30,7 @@ namespace Application.Queries.Handlers
             return Coffees;
         }
     }
+
+    public class GetCoffeesQuery : IRequest<List<CoffeeDto>>
+    { }
 }

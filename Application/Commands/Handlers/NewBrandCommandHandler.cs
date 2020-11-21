@@ -1,5 +1,4 @@
-﻿using Application.Commands.Objects;
-using Application.DTOs;
+﻿using Application.DTOs.Brand;
 using Core.Entities;
 using Infrastructure.Interfaces;
 using MediatR;
@@ -31,5 +30,17 @@ namespace Application.Commands.Handlers
                 ImageUri = brand.ImageUri 
             };
         }
+    }
+
+    public class NewBrandCommand : IRequest<BrandDto>
+    {
+        public NewBrandCommand(string name, string imageUri)
+        {
+            Name = name;
+            ImageUri = imageUri;
+        }
+
+        public string Name { get; }
+        public string ImageUri { get; }
     }
 }

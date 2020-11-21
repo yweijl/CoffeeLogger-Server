@@ -8,6 +8,6 @@
         public string CoffeeType { get; set; }
         public string Country { get; set; }
         public decimal Rating { get; set; }
-        public int Number { get; set; }
+        public int LoggedRecords { get; set; }
     }
 }

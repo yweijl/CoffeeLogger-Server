@@ -1,15 +1,18 @@
-﻿using Application.Commands.Objects;
-using Application.DTOs;
-using Application.Queries.Objects;
+﻿using Application.Commands.Handlers;
+using Application.DTOs.Brand;
+using Application.Queries.Handlers;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Produces("application/json")]
     public class BrandController : ControllerBase
     {
         private readonly ILogger<BrandController> _logger;
@@ -22,6 +25,8 @@ namespace API.Controllers
         }
 
         [HttpGet("list")]
+        [ProducesResponseType(typeof(List<BrandDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetList()
         {
             var brands = await mediatr.Send(new GetBrandsQuery()).ConfigureAwait(false);
@@ -32,6 +37,8 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(typeof(BrandDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Get(long id)
         {
             var brand = await mediatr.Send(new GetBrandQuery(id)).ConfigureAwait(false);
@@ -42,6 +49,8 @@ namespace API.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(typeof(BrandDto), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task <IActionResult> Post([FromBody] NewBrandDto newBrand)
         {
             var brand = await mediatr.Send(

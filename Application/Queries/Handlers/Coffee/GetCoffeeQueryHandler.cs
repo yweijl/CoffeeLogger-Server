@@ -1,5 +1,4 @@
-﻿using Application.DTOs;
-using Application.Queries.Objects;
+﻿using Application.DTOs.Coffee;
 using Core.Entities;
 using Infrastructure.Interfaces;
 using MediatR;
@@ -28,6 +27,16 @@ namespace Application.Queries.Handlers
                 }).ConfigureAwait(false);
             
             return brands;
+        }
+    }
+
+    public class GetCoffeeQuery : IRequest<CoffeeDto>
+    {
+        public long Id { get; }
+
+        public GetCoffeeQuery(long id)
+        {
+            Id = id;
         }
     }
 }
