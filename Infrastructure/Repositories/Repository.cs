@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
@@ -112,6 +113,45 @@ namespace Infrastructure.Repositories
             }
 
             return InsertAsync();
+        }
+
+        public async Task<TEntity> Update<TEntity>(Expression<Func<TEntity,bool>> predicate, Expression<Func<TEntity, TEntity>> updateExpression) where TEntity : EntityBase, new()
+        {
+            if (updateExpression == null)
+                throw new ArgumentNullException(nameof(updateExpression));
+
+            var entity = await SingleAsync(predicate).ConfigureAwait(false);
+
+            if (entity == null) 
+                throw new ArgumentNullException(nameof(entity));
+
+            UpdateFactory(updateExpression).Compile().Invoke(entity);
+            entity.CreateDate = DateTime.Now;
+
+            await _context.SaveChangesAsync().ConfigureAwait(false);
+
+            return entity;
+        }
+
+
+        private static Expression<Action<TEntity>> UpdateFactory<TEntity>(Expression<Func<TEntity, TEntity>> expression) where TEntity : EntityBase, new()
+        {
+            var body = expression.Body as MemberInitExpression;
+
+            var parameter = expression.Parameters.First();
+
+            var expressionList = new List<Expression>();
+            foreach (MemberAssignment binding in body.Bindings)
+            {
+                var property = binding.Member as PropertyInfo;
+                var setMethod = property.GetSetMethod();
+                var call = Expression.Call(parameter, setMethod, binding.Expression);
+                expressionList.Add(call);
+            }
+
+            var block = Expression.Block(expressionList);
+
+            return Expression.Lambda<Action<TEntity>>(block, parameter);
         }
     }
 }

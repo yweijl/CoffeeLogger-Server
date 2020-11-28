@@ -16,5 +16,6 @@ namespace Infrastructure.Interfaces
         Task<List<TResult>> ListAsync<TEntity, TResult>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TResult>> selector) where TEntity : EntityBase, new();
         Task<TEntity> SingleAsync<TEntity>(Expression<Func<TEntity, bool>> predicate) where TEntity : EntityBase, new();
         Task<TResult> SingleAsync<TEntity, TResult>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TResult>> selector) where TEntity : EntityBase, new();
+        Task<TEntity> Update<TEntity>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TEntity>> updateExpression) where TEntity : EntityBase, new();
     }
 }
