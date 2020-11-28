@@ -1,6 +1,6 @@
-﻿using Application.Commands.Handlers;
+﻿using Application.Commands;
 using Application.DTOs.Coffee;
-using Application.Queries.Handlers;
+using Application.Queries.CoffeeHandlers;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,10 +15,10 @@ namespace API.Controllers
     [Produces("application/json")]
     public class CoffeeController : ControllerBase
     {
-        private readonly ILogger<BrandController> _logger;
+        private readonly ILogger<CoffeeController> _logger;
         private readonly IMediator _mediatr;
 
-        public CoffeeController(ILogger<BrandController> logger, IMediator mediatr)
+        public CoffeeController(ILogger<CoffeeController> logger, IMediator mediatr)
         {
             _logger = logger;
             _mediatr = mediatr;

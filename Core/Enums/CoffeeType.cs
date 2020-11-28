@@ -2,6 +2,7 @@
 {
     public enum CoffeeType
     {
+        Unknown,
         Arabica,
         Robusto
     }

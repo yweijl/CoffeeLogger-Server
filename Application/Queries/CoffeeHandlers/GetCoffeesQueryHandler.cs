@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Application.Queries.Handlers
+namespace Application.Queries.CoffeeHandlers
 {
     public class GetCoffeesQueryHandler : IRequestHandler<GetCoffeesQuery, List<CoffeeDto>>
     {
@@ -24,7 +24,10 @@ namespace Application.Queries.Handlers
                 { 
                     Id = x.Id,
                     Country = x.Country,
-                    CoffeeType = x.CoffeeType
+                    CoffeeType = x.CoffeeType,
+                    BrandId = x.BrandId,
+                    LoggedRecords = x.loggedRecords,
+                    Rating = x.Rating
                 }).ConfigureAwait(false);
             
             return Coffees;

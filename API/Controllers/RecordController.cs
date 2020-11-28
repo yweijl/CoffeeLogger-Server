@@ -1,6 +1,6 @@
-﻿using Application.Commands.Handlers;
+﻿using Application.Commands;
 using Application.DTOs.Record;
-using Application.Queries.Handlers;
+using Application.Queries.RecordHandlers;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,10 +15,10 @@ namespace API.Controllers
     [Produces("application/json")]
     public class RecordController : ControllerBase
     {
-        private readonly ILogger<BrandController> _logger;
+        private readonly ILogger<RecordController> _logger;
         private readonly IMediator _mediatr;
 
-        public RecordController(ILogger<BrandController> logger, IMediator mediatr)
+        public RecordController(ILogger<RecordController> logger, IMediator mediatr)
         {
             _logger = logger;
             _mediatr = mediatr;

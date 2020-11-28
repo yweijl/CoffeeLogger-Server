@@ -166,11 +166,11 @@ namespace Infrastructure
             context.Add(record);
             context.SaveChanges();
 
-            var recordFlavors = new RecordFlavors[]
+            var recordFlavors = new RecordFlavor[]
             {
-                new RecordFlavors{FlavorId = 1, RecordId = 1},
-                new RecordFlavors{FlavorId = 2, RecordId = 1},
-                new RecordFlavors{FlavorId = 3, RecordId = 1},
+                new RecordFlavor{FlavorId = 1, RecordId = 1},
+                new RecordFlavor{FlavorId = 2, RecordId = 1},
+                new RecordFlavor{FlavorId = 3, RecordId = 1},
             };
 
             context.AddRange(recordFlavors);

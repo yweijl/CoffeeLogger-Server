@@ -22,6 +22,7 @@ namespace Application.Queries.Handlers
             var brands = await _repository.ListAsync<Brand, BrandDto>(
                 x => new BrandDto 
                 { 
+                    Id = x.Id,
                     Name = x.Name,
                     ImageUri = x.ImageUri
                 }).ConfigureAwait(false);

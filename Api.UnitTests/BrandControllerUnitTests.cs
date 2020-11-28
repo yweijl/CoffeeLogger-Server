@@ -1,5 +1,7 @@
 using API.Controllers;
+using Application.Commands;
 using Application.DTOs.Brand;
+using Application.Queries.BrandHandlers;
 using Application.Queries.Handlers;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +15,7 @@ using System.Threading.Tasks;
 namespace Api.UnitTests
 {
     [TestFixture]
-    public class Tests
+    public class BrandControllerUnitTests
     {
         [Test]
         public async Task BrandController_GetList_Returns_Succes()
@@ -81,6 +83,26 @@ namespace Api.UnitTests
             var result = await controller.Get(1).ConfigureAwait(false);
 
             Assert.That(result, Is.InstanceOf<NotFoundResult>());
+        }
+
+        [Test]
+        public async Task BrandController_Post_Works()
+        {
+            var logger = new Mock<ILogger<BrandController>>();
+            var mediator = new Mock<IMediator>();
+
+            mediator.Setup(x => x.Send(
+                It.IsAny<NewBrandCommand>(),
+                It.IsAny<CancellationToken>())).ReturnsAsync(new BrandDto { Id = 1});
+
+
+            var controller = new BrandController(logger.Object, mediator.Object);
+            var result = 
+                await controller.Post(
+                    new NewBrandDto { ImageUri = "uri", Name = "name"})
+                .ConfigureAwait(false);
+
+            Assert.That(result, Is.InstanceOf<CreatedAtActionResult>());
         }
     }
 }

@@ -5,7 +5,7 @@ using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Application.Queries.Handlers
+namespace Application.Queries.CoffeeHandlers
 {
     public class GetCoffeeQueryHandler : IRequestHandler<GetCoffeeQuery, CoffeeDto>
     {
@@ -18,15 +18,18 @@ namespace Application.Queries.Handlers
 
         public async Task<CoffeeDto> Handle(GetCoffeeQuery request, CancellationToken cancellationToken)
         {
-            var brands = await _repository.SingleAsync<Coffee, CoffeeDto>(x => x.Id == request.Id,
+            var coffee = await _repository.SingleAsync<Coffee, CoffeeDto>(x => x.Id == request.Id,
                 x => new CoffeeDto 
                 { 
                     Id = x.Id,
                     CoffeeType = x.CoffeeType,
-                    Country = x.Country
+                    Country = x.Country,
+                    BrandId = x.BrandId,
+                    LoggedRecords = x.loggedRecords,
+                    Rating = x.Rating
                 }).ConfigureAwait(false);
             
-            return brands;
+            return coffee;
         }
     }
 

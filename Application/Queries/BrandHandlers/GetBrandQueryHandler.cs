@@ -5,7 +5,7 @@ using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Application.Queries.Handlers
+namespace Application.Queries.BrandHandlers
 {
     public class GetBrandQueryHandler : IRequestHandler<GetBrandQuery, BrandDto>
     {
@@ -21,6 +21,7 @@ namespace Application.Queries.Handlers
             var brands = await _repository.SingleAsync<Brand, BrandDto>(x => x.Id == request.Id,
                 x => new BrandDto
                 { 
+                    Id = x.Id,
                     Name = x.Name,
                     ImageUri = x.ImageUri
                 }).ConfigureAwait(false);

@@ -1,8 +1,11 @@
-﻿using Application.Commands.Handlers;
+﻿using Application.Commands;
 using Application.DTOs.Brand;
 using Application.DTOs.Coffee;
 using Application.DTOs.Record;
+using Application.Queries.BrandHandlers;
+using Application.Queries.CoffeeHandlers;
 using Application.Queries.Handlers;
+using Application.Queries.RecordHandlers;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;

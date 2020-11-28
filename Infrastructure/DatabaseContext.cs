@@ -15,7 +15,7 @@ namespace Infrastructure
         public DbSet<Coffee> Coffees { get; set; }
         public DbSet<Flavor> Flavors { get; set; }
         public DbSet<Record> Records { get; set; }
-        public DbSet<RecordFlavors> RecordFlavors { get; set; }
+        public DbSet<RecordFlavor> RecordFlavors { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -34,13 +34,13 @@ namespace Infrastructure
                 .Entity<Record>()
                 .HasMany(r => r.Flavors)
                 .WithMany(r => r.Records)
-                .UsingEntity<RecordFlavors>(
+                .UsingEntity<RecordFlavor>(
                 rf => rf.HasOne(x => x.Flavor).WithMany().HasForeignKey(x => x.FlavorId),
                 rf => rf.HasOne(x => x.Record).WithMany().HasForeignKey(x => x.RecordId))
                 .HasKey(rf => rf.Id);
 
             modelBuilder
-                .Entity<RecordFlavors>()
+                .Entity<RecordFlavor>()
                 .HasIndex(rf => new { rf.RecordId, rf.FlavorId })
                 .IsUnique();
         }

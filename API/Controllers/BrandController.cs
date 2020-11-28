@@ -1,5 +1,6 @@
-﻿using Application.Commands.Handlers;
+﻿using Application.Commands;
 using Application.DTOs.Brand;
+using Application.Queries.BrandHandlers;
 using Application.Queries.Handlers;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -54,7 +55,7 @@ namespace API.Controllers
         public async Task <IActionResult> Post([FromBody] NewBrandDto newBrand)
         {
             var brand = await mediatr.Send(
-                new NewBrandCommand(newBrand.Name, newBrand.imageUri)
+                new NewBrandCommand(newBrand.Name, newBrand.ImageUri)
                 ).ConfigureAwait(false);
 
             return CreatedAtAction(nameof(Get), new { id = brand.Id }, brand);

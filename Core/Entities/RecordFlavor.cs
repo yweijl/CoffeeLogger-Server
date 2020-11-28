@@ -1,6 +1,6 @@
 ﻿namespace Core.Entities
 {
-    public class RecordFlavors : EntityBase
+    public class RecordFlavor : EntityBase
     {
         public long RecordId { get; set; }
         public Record Record { get; set; }

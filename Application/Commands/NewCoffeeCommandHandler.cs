@@ -7,7 +7,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Application.Commands.Handlers
+namespace Application.Commands
 {
     public class NewCoffeeCommandHandler : IRequestHandler<NewCoffeeCommand, CoffeeDto>
     {

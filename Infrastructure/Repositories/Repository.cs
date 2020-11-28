@@ -12,12 +12,10 @@ namespace Infrastructure.Repositories
     public class Repository : IRepository
     {
         private readonly IDatabaseContext _context;
-        private readonly DatabaseContext dc;
 
-        public Repository(IDatabaseContext context, DatabaseContext dc)
+        public Repository(IDatabaseContext context)
         {
             _context = context;
-            this.dc = dc;
         }
 
         public Task<TResult> SingleAsync<TEntity, TResult>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TResult>> selector)

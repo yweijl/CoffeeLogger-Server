@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Application.Queries.Handlers
+namespace Application.Queries.CoffeeHandlers
 {
     public class GetDetailedCoffeesQueryHandler : IRequestHandler<GetDetailedCoffeesQuery, List<DetailedCoffeeDto>>
     {

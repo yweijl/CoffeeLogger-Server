@@ -2,25 +2,27 @@
 using Core.Entities;
 using Infrastructure.Interfaces;
 using MediatR;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Application.Queries.Handlers
+namespace Application.Queries.RecordHandlers
 {
-    public class GetRecordQueryHandler : IRequestHandler<GetRecordQuery, RecordDto>
+    public class GetRecordsQueryHandler : IRequestHandler<GetRecordsQuery, List<RecordDto>>
     {
         private readonly IRepository _repository;
 
-        public GetRecordQueryHandler(IRepository repository)
+        public GetRecordsQueryHandler(IRepository repository)
         {
             _repository = repository;
         }
 
-        public async Task<RecordDto> Handle(GetRecordQuery request, CancellationToken cancellationToken)
+        public async Task<List<RecordDto>> Handle(GetRecordsQuery request, CancellationToken cancellationToken)
         {
-            var brands = await _repository.SingleAsync<Record, RecordDto>(x => x.Id == request.Id,
+            var Records = await _repository.ListAsync<Record, RecordDto>(
                 x => new RecordDto
                 {
+                    Id = x.Id,
                     DoseIn = x.DoseIn,
                     DoseOut = x.DoseOut,
                     Rating = x.Rating,
@@ -28,17 +30,10 @@ namespace Application.Queries.Handlers
                     CreateDate = x.CreateDate
                 }).ConfigureAwait(false);
 
-            return brands;
+            return Records;
         }
     }
 
-    public class GetRecordQuery : IRequest<RecordDto>
-    {
-        public long Id { get; }
-
-        public GetRecordQuery(long id)
-        {
-            Id = id;
-        }
-    }
+    public class GetRecordsQuery : IRequest<List<RecordDto>>
+    { }
 }

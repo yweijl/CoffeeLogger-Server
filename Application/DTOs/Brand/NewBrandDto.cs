@@ -6,6 +6,6 @@ namespace Application.DTOs.Brand
     {
         [Required]
         public string Name { get; set; }
-        public string imageUri { get; set; }
+        public string ImageUri { get; set; }
     }
 }

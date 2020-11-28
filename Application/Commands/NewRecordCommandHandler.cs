@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Application.Commands.Handlers
+namespace Application.Commands
 {
     public class NewRecordCommandHandler : IRequestHandler<NewRecordCommand, RecordDto>
     {
@@ -55,7 +55,7 @@ namespace Application.Commands.Handlers
 
             var recordFlavors =
                 existingFlavors.Select(
-                    x => new RecordFlavors
+                    x => new RecordFlavor
                     {
                         FlavorId = x.Id,
                         RecordId = record.Id
