@@ -117,6 +117,9 @@ namespace Infrastructure.Repositories
 
         public async Task<TEntity> Update<TEntity>(Expression<Func<TEntity,bool>> predicate, Expression<Func<TEntity, TEntity>> updateExpression) where TEntity : EntityBase, new()
         {
+            if (predicate == null)
+                throw new ArgumentNullException(nameof(predicate));
+
             if (updateExpression == null)
                 throw new ArgumentNullException(nameof(updateExpression));
 
@@ -126,7 +129,7 @@ namespace Infrastructure.Repositories
                 throw new ArgumentNullException(nameof(entity));
 
             UpdateFactory(updateExpression).Compile().Invoke(entity);
-            entity.CreateDate = DateTime.Now;
+            entity.MutationDate = DateTime.Now;
 
             await _context.SaveChangesAsync().ConfigureAwait(false);
 
