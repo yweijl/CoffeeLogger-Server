@@ -3,6 +3,7 @@ using Infrastructure;
 using Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -20,23 +21,9 @@ namespace Shared.UnitTests
 
             _context = new DatabaseContext(options);
 
-            foreach (var entity in entities)
-            {
-                _context.Add(GetEntity(entity));
-            }
+            _context.AddRange(entities);
 
             _context.SaveChanges();
-        }
-
-        private static EntityBase GetEntity(EntityBase entity)
-        {
-            if (entity is Brand) return entity as Brand;
-            if (entity is Coffee) return entity as Coffee;
-            if (entity is Record) return entity as Record;
-            if (entity is Flavor) return entity as Flavor;
-            if (entity is RecordFlavor) return entity as RecordFlavor;
-
-            throw new ArgumentOutOfRangeException(nameof(entity));
         }
 
         public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
